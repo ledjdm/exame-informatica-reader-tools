@@ -1,3 +1,13 @@
+/*!
+ * Exame Informática Reader Tools
+ * http://ledjdm.github.com/eirt/
+ *
+ * Copyright 2015 Pedro F. Santos, pedrofsantos.com, me@pedrofsantos.com
+ * Released under the MIT license
+ * http://en.wikipedia.org/wiki/MIT_License
+ *
+ * Date: 2015-02-02T22:49Z
+ */
 var EIReaderTools =
 {
 	options:
