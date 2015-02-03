@@ -57,8 +57,20 @@ var EIReaderTools =
 
 	    var goToPage = function(e)
 	    {
+	    	e.stopPropagation();
+		    e.preventDefault();
+
+		    if (e.type !== "click")
+		    {
+		    	var keycode = (e.keyCode ? e.keyCode : e.which);
+				if (keycode !== 13 || e.type !== "keyup")
+					return false;
+		    }
+
 	    	var $this = $(this);
-		    var input = $this.siblings('#eirt-pag-input');
+		    var input = $this;
+		    if ($this.siblings('#eirt-pag-input').length > 0)
+		    	input = $this.siblings('#eirt-pag-input');
 		    var inputVal = input.val();
 		    var imgs = $("#bvdMenuImg img[onclick]");
 		    input.val("");
@@ -70,14 +82,15 @@ var EIReaderTools =
 		    };
 		    if (specialPages[inputVal] != null)
 		    {
-		        $(imgs[inputVal]).trigger("click");
+		        $(imgs[specialPages[inputVal]]).click();
 		        return;
 		    }
 		    var num = parseInt(inputVal);
 		    if (num == null || num === NaN)
 		    	return;
 		    var numLimited = Math.max(Math.min(num, imgs.length), 0);
-		    $(imgs[numLimited]).trigger("click");
+		    $(imgs[numLimited]).click();
+		    return;
 	    };
 
 	    $("<label>").text("Página:").appendTo(el);
@@ -91,7 +104,9 @@ var EIReaderTools =
 	    		"width": "40px",
 	    		"height": "14px",
 	    		"margin": "0 5px",
-	    	}).appendTo(el);
+	    	})
+	    	.keyup(goToPage)
+	    	.appendTo(el);
 
 	    $("<input>",
 	    	{
@@ -108,7 +123,7 @@ var EIReaderTools =
 
 	    $("body").keyup(function(e)
 	    {
-		    if (e.which == 80)
+		    if (e.which == 80 && e.altKey)
 		        $("#eirt-pag-input").focus();
 		});
 	},
@@ -122,46 +137,44 @@ var EIReaderTools =
 	},
 	initZoom: function()
 	{
-		var callback = function()
+		$("#bvdPage .pages").dblclick(function(e)
 		{
-			$("#ctl00_cph_viewer1_imgPage").data("scale", 1);
-			var mathLimit = function(value, min, max)
-			{
-				return Math.max(Math.min(value, max), min);
-			};
+			var $this = $(this).find("img");
+			$("#bvdMenu").show();
+			$this.css("transform", "");
+		});
 
-			$(document).off("mousewheel", ".panviewport")
-				.on("mousewheel", ".panviewport", function(e, delta)
-				{
-					$(this).css("overflow", "hidden");
-					var $this = $("#ctl00_cph_viewer1_imgPage");
-					/*
-					var imgW = $this.width();
-					var imgH = $this.height();
-					var mouseX = mathLimit(e.clientX - $this.offset().left, 0, imgW);
-					var mouseY = mathLimit(e.clientY - $this.offset().top, 0, imgH);
-					var pointX = Math.abs(mouseX * 100 / imgW);
-					var pointY = Math.abs(mouseY * 100 / imgH);
-					*/
-					var scaleValue = $this.data("scale");
-
-					var scale = mathLimit((delta / 10) + scaleValue, 0.1, 1);
-					var transform = "scale("+scale+")".replace("@par", scale);
-					//var transformOrigin = mathLimit(pointX, 0, 100)+"% "+mathLimit(pointY, 0, 100)+"%";
-					
-					$this.data("scale", scale)
-						.css(
-						{
-							"transform": transform,
-							//"transform-origin": transformOrigin,
-						});
-					e.preventDefault();
-				});
-
-			$("#eirt-state").css("color", "#32CD32");
+		var mathLimit = function(value, min, max)
+		{
+			return Math.max(Math.min(value, max), min);
 		};
 
-		this.loadScript("https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.12/jquery.mousewheel.min.js", callback);
+		$(document).on("mousewheel", ".panviewport", function(e, delta)
+			{
+				//$(this).css("overflow", "hidden");
+				var $this = $(this).find("img:visible");
+				/*
+				var imgW = $this.width();
+				var imgH = $this.height();
+				var mouseX = mathLimit(e.clientX - $this.offset().left, 0, imgW);
+				var mouseY = mathLimit(e.clientY - $this.offset().top, 0, imgH);
+				var pointX = Math.abs(mouseX * 100 / imgW);
+				var pointY = Math.abs(mouseY * 100 / imgH);
+				*/
+				var scaleValue = $this.data("scale") || 1;
+
+				var scale = mathLimit((delta / 10) + scaleValue, 0.1, 1);
+				var transform = "scale("+scale+")".replace("@par", scale);
+				//var transformOrigin = mathLimit(pointX, 0, 100)+"% "+mathLimit(pointY, 0, 100)+"%";
+				
+				$this.data("scale", scale)
+					.css(
+					{
+						"transform": transform,
+						//"transform-origin": transformOrigin,
+					});
+				e.preventDefault();
+			});
 	},
 	initFullscreen: function()
 	{
@@ -178,8 +191,7 @@ var EIReaderTools =
 
 			if (mode)
 			{
-				$("#bvdPage")
-					.css(
+				$('#bvdMenu').css(
 					{
 						"position": "absolute",
 						"top": "0",
@@ -198,13 +210,6 @@ var EIReaderTools =
 				fsLeft = "0";
 			}
 
-			$("#eirt-container")
-				.css(
-				{
-					"left": fsLeft,
-					"top": fsTop,
-				})
-				.insertBefore(holder);
 			$this.css("background-image", bgcolor);
 			$this.data("mode", mode);
 			ResizeViewer = EIReaderTools.options.savedFunctions["ResizeViewer"][func];
@@ -226,6 +231,15 @@ var EIReaderTools =
 			.data("mode", false)
 			.click(toggleFullscreen)
 			.insertAfter($("#eirt-pag-cont"));
+
+		$(".crn.topright, .crn.topleft").click(function()
+		{
+			var $el = $("#eirt-fs");
+			if ($el.data("mode"))
+			{
+				$el.click();
+			}
+		});
 	},
 	init: function()
 	{
@@ -233,7 +247,8 @@ var EIReaderTools =
 			.css(
 			{
 				"position": "absolute",
-				"left": "102px",
+				"left": "50%",
+				"transform": "translateX(-50%)",
 				"top": "6px",
 				"z-index": "1010",
 				"background": "#fff",
@@ -241,7 +256,7 @@ var EIReaderTools =
 				"border-right": "1px solid hsl(0, 0%, 70%)",
 				"border-bottom": "1px solid hsl(0, 0%, 70%)",
 			})
-			.insertBefore($("#zahirad192"));
+			.appendTo($("body"));
 
 		$("<span>", {id: "eirt-state"})
 			.text("EIReaderTools")
@@ -252,31 +267,22 @@ var EIReaderTools =
 				"position": "relative",
 			}).appendTo($("#eirt-container"));
 
+		$("head").append($("<style>").text(
+			'#eirt-state:after{'+
+				'content: "v2015.02.03";'+
+				'color: black;'+
+				'font-size: 8px;'+
+				'position: absolute;'+
+				'left: 0;'+
+				'bottom: -8px;'+
+				'margin-left: 32px;}'));
+
 		EIReaderTools.initPagination();
 		EIReaderTools.initNavigation();
 		EIReaderTools.initFullscreen();
 		EIReaderTools.initZoom();
-	},
-	loadScript: function(url, callback)
-	{
-		var splitUrl = url.split("/");
-		var lastIndex = splitUrl.length - 1;
-		if ($('script[src^="'+splitUrl[lastIndex]+'"]').length > 0)
-		{
-			if (callback)
-				callback();
-			return;
-		}
-		var script=document.createElement("script");
-		script.src=url;
-		var head=document.getElementsByTagName("head")[0];
-		var _callback = callback;
-		script.onload = script.onreadystatechange = function()
-		{
-			if (document.readyState == "complete" && _callback)
-				_callback();
-		};
-		head.appendChild(script);
+
+		$("#eirt-state").css("color", "#32CD32");
 	},
 }
 
