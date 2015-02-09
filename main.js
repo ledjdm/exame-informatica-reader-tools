@@ -2,14 +2,15 @@
  * Exame Informática Reader Tools
  * http://ledjdm.github.com/eirt/
  *
- * Copyright 2015 Pedro F. Santos, pedrofsantos.com, me@pedrofsantos.com
+ * Copyright 2015 Pedro F. Santos, http://pedrofsantos.com, me@pedrofsantos.com
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Date: 2015-02-02T22:49Z
+ * Version: 2015.02.09
  */
 var EIReaderTools =
 {
+	version: "2015.02.09",
 	options:
 	{
 		fullscreen:
@@ -318,7 +319,7 @@ var EIReaderTools =
 
 		$("head").append($("<style>", {id: "eirt-style"}).text(
 			'#eirt-state:after{'+
-				'content: "v2015.02.03";'+
+				'content: "v"'+EIReaderTools.version+';'+
 				'color: black;'+
 				'font-size: 8px;'+
 				'position: absolute;'+
