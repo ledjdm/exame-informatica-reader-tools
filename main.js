@@ -149,10 +149,11 @@ var EIReaderTools =
 			return Math.max(Math.min(value, max), min);
 		};
 
-		$(document).on("mousewheel", ".panviewport", function(e, delta)
+		$(document).on("mousewheel", ".panviewport", function(e)
 			{
 				//$(this).css("overflow", "hidden");
 				var $this = $(this).find("img:visible");
+				var deltaY = -e.originalEvent.deltaY;
 				/*
 				var imgW = $this.width();
 				var imgH = $this.height();
@@ -163,7 +164,7 @@ var EIReaderTools =
 				*/
 				var scaleValue = $this.data("scale") || 1;
 
-				var scale = mathLimit((delta / 10) + scaleValue, 0.1, 1);
+				var scale = mathLimit((deltaY / 1000) + scaleValue, 0.1, 1);
 				var transform = "scale("+scale+")".replace("@par", scale);
 				//var transformOrigin = mathLimit(pointX, 0, 100)+"% "+mathLimit(pointY, 0, 100)+"%";
 				
