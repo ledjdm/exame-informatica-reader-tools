@@ -39,6 +39,17 @@ var EIReaderTools =
 					RszImgs(a, b)
 				},
 			},
+			"CancelZoom":
+			{
+				"orig": CancelZoom,
+				"mod": function(e)
+				{
+					var $this = $(this).find("img");
+					$("#bvdMenu").show();
+					$this.css("transform", "");
+					EIReaderTools.options.savedFunctions.CancelZoom.orig();
+				},
+			}
 		},
 	},
 	initPagination: function()
@@ -49,7 +60,7 @@ var EIReaderTools =
 	    		"display": "inline-block",
 				"color": "#000",
 				"position": "relative",
-				"padding": "0 10px",
+				"padding": "0 2px",
 				"border-left": "1px solid hsl(0, 0%, 70%)",
 				"border-right": "1px solid hsl(0, 0%, 70%)",
 	    	})
@@ -93,21 +104,28 @@ var EIReaderTools =
 		    return;
 	    };
 
-	    $("<label>").text("Página:").appendTo(el);
+	    var focusInput = function(e)
+	    {
+		    if (e.which == 80 && e.altKey)
+		        $("#eirt-pag-input").focus();
+		};
+
+	    //$("<label>").text("Página:").appendTo(el);
 	    $("<input>",
 	    	{
 	    		id: "eirt-pag-input",
 	    		type: "text",
+	    		placeholder: "Página"
 	    	})
 	    	.css(
 	    	{
 	    		"width": "40px",
 	    		"height": "14px",
-	    		"margin": "0 5px",
+	    		"margin": "0px 3px 0 5px",
 	    	})
-	    	.keyup(goToPage)
 	    	.appendTo(el);
 
+	    /*
 	    $("<input>",
 	    	{
 		        id: "eirt-pag-acc",
@@ -118,38 +136,53 @@ var EIReaderTools =
 	    	{
 	    		"width": "30px",
 	    		"height": "18px"
-	    	}).click(goToPage)
+	    	})
 	    	.appendTo(el);
+	    */
 
-	    $("body").keyup(function(e)
-	    {
-		    if (e.which == 80 && e.altKey)
-		        $("#eirt-pag-input").focus();
-		});
+	    $(document)
+	    	.on("keyup.eirt", focusInput)
+	    	.on("keyup.eirt", "#eirt-pag-input", goToPage)
+	    	.on("click.eirt", "#eirt-pag-acc", goToPage);
 	},
 	initNavigation: function()
 	{
-		$("body").keyup(function(e)
+		$(document).on("keyup.eirt", function(e)
 		{
-		    if (e.which === 39) $(".crn.topright").click();
-		    else if (e.which === 37) $(".crn.topleft").click();
+			var imgs = $("#bvdMenuImg img[onclick]");
+			var $handlerL = $(".page.fleft");
+			var $handlerR = $(".page.fright");
+
+		    if (e.which === 39)
+		    {
+		    	if ($handlerR.length === 0)
+		    		$handlerR = $(".page:visible");
+		    	var src = $handlerR.attr("src");
+		    	var page = +src.split("/")[3].replace("f", "");
+
+		    	if (page < imgs.length - 1)
+	    			$(".crn.topright").click();
+		    }
+		    else if (e.which === 37)
+		    {
+		    	if ($handlerL.length === 0)
+		    		$handlerL = $(".page:visible");
+		    	var src = $handlerL.attr("src");
+		    	var page = +src.split("/")[3].replace("f", "");
+
+		    	if (page > 1)
+		    		$(".crn.topleft").click();
+		    }
 		});
 	},
 	initZoom: function()
 	{
-		$("#bvdPage .pages").dblclick(function(e)
-		{
-			var $this = $(this).find("img");
-			$("#bvdMenu").show();
-			$this.css("transform", "");
-		});
-
 		var mathLimit = function(value, min, max)
 		{
 			return Math.max(Math.min(value, max), min);
 		};
 
-		$(document).on("mousewheel", ".panviewport", function(e)
+		$(document).on("mousewheel.eirt", ".panviewport", function(e)
 			{
 				//$(this).css("overflow", "hidden");
 				var $this = $(this).find("img:visible");
@@ -186,7 +219,7 @@ var EIReaderTools =
 			var mode = !$this.data("mode");
 			var bgcolor = 'url("data:image/png;base64,'+icons.off+'")';
 			var fsLeft = "50%";
-			var fsTransform = "-50%";
+			var fsTransform = "-219%";
 			var fsTop = "6px";
 			var func = "orig";
 			var holder = $("#zahirad192");
@@ -236,7 +269,7 @@ var EIReaderTools =
 				"width": "15px",
 				"height": "15px",
 				"background-image": 'url("data:image/png;base64,'+icons.off+'")',
-				"margin-left": "10px",
+				"margin-left": "5px",
 				"position": "relative",
 				"top": "3px",
 				"background-size": "100%",
@@ -245,7 +278,7 @@ var EIReaderTools =
 			.click(toggleFullscreen)
 			.insertAfter($("#eirt-pag-cont"));
 
-		$(".crn.topright, .crn.topleft").click(function()
+		$(document).on("click.eirt", ".crn.topright, .crn.topleft", function()
 		{
 			var $el = $("#eirt-fs");
 			if ($el.data("mode"))
@@ -256,16 +289,18 @@ var EIReaderTools =
 	},
 	init: function()
 	{
+		EIReaderTools.reset();
+
 		$("<div>", {id: "eirt-container"})
 			.css(
 			{
 				"position": "absolute",
 				"left": "50%",
-				"transform": "translateX(-50%)",
-				"top": "6px",
+				"transform": "translateX(-219%)",
+				"top": "5px",
 				"z-index": "1010",
 				"background": "#fff",
-				"padding": "5px",
+				"padding": "4px",
 				"border-right": "1px solid hsl(0, 0%, 70%)",
 				"border-bottom": "1px solid hsl(0, 0%, 70%)",
 			})
@@ -276,11 +311,12 @@ var EIReaderTools =
 			.css(
 			{
 				"color": "#f00",
-				"margin-right": "10px",
+				"margin-right": "5px",
 				"position": "relative",
+				"top": "-4px",
 			}).appendTo($("#eirt-container"));
 
-		$("head").append($("<style>").text(
+		$("head").append($("<style>", {id: "eirt-style"}).text(
 			'#eirt-state:after{'+
 				'content: "v2015.02.03";'+
 				'color: black;'+
@@ -290,12 +326,30 @@ var EIReaderTools =
 				'bottom: -8px;'+
 				'margin-left: 32px;}'));
 
+		CancelZoom = EIReaderTools.options.savedFunctions.CancelZoom.mod;
+
 		EIReaderTools.initPagination();
 		EIReaderTools.initNavigation();
 		EIReaderTools.initFullscreen();
 		EIReaderTools.initZoom();
 
 		$("#eirt-state").css("color", "#32CD32");
+	},
+	reset: function()
+	{
+		$(
+			"#eirt-container,"+
+			"#eirt-style"
+		).remove();
+
+		ResizeViewer = EIReaderTools.options.savedFunctions.ResizeViewer.orig;
+		CancelZoom = EIReaderTools.options.savedFunctions.CancelZoom.orig;
+
+		$(document)
+			.off("click.eirt")
+			.off("dblclick.eirt")
+			.off("mousewheel.eirt")
+			.off("keyup.eirt");
 	},
 }
 
