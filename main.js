@@ -1,6 +1,6 @@
 /*!
  * Exame Informática Reader Tools
- * http://ledjdm.github.com/eirt/
+ * https://github.com/ledjdm/exame-informatica-reader-tools
  *
  * Copyright 2015 Pedro F. Santos, http://pedrofsantos.com, me@pedrofsantos.com
  * Released under the MIT license
