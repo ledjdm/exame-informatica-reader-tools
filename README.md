@@ -1,5 +1,8 @@
 # Exame Informática Reader Tools
 
+- [English](#english)
+- [Português](#portugues)
+
 ## English
 ### What is it?
 Enhancements for desktop readers of [Exame Informática online magazine](http://exameinformatica.assineja.pt/) reader.
