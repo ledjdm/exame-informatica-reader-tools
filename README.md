@@ -1,7 +1,7 @@
 # Exame Informática Reader Tools
 
 - [English](#english)
-- [Português](#portugu%C3%AAs)
+- [Português](#português)
 
 ## English
 ### What is it?
