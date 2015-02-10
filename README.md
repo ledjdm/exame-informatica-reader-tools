@@ -26,7 +26,10 @@ Funcionalidades adicionais para o leitor da [revista online Exame Informática](
   
 ### Como usar
 
-  Depois de teres instalado, basta clickares no favorito para aparecer a ferramenta no topo da página, ao lado do logo da Exame Informática.
+  Depois de teres instalado:
+  - escolhe a revista mensal que queres ler
+  - clicka no favorito para aparecer a ferramenta
+  - lê o próximo tópico sobre as ferramentas que podes utilizar
   
 #### Ferramentas
   
@@ -42,3 +45,5 @@ Funcionalidades adicionais para o leitor da [revista online Exame Informática](
     - usar o icon do ecrã inteiro
   - Zoom de uma página
     - clickar numa página e usar a roda de SCROLL do rato para aproximar ou afastar a página
+
+Testado no Google Chrome 40
