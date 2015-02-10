@@ -319,7 +319,7 @@ var EIReaderTools =
 
 		$("head").append($("<style>", {id: "eirt-style"}).text(
 			'#eirt-state:after{'+
-				'content: "v"'+EIReaderTools.version+';'+
+				'content: "v'+EIReaderTools.version+'";'+
 				'color: black;'+
 				'font-size: 8px;'+
 				'position: absolute;'+
