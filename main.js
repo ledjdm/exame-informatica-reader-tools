@@ -6,11 +6,11 @@
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.02.09
+ * Version: 2015.02.10
  */
 var EIReaderTools =
 {
-	version: "2015.02.09",
+	version: "2015.02.10",
 	options:
 	{
 		fullscreen:
