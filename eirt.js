@@ -1,16 +1,16 @@
-/*!
+/**!
  * Exame Informática Reader Tools
- * https://github.com/ledjdm/exame-informatica-reader-tools
+ * https://github.com/pedrofsantoscom/exame-informatica-reader-tools
  *
  * Copyright 2015 Pedro F. Santos, http://pedrofsantos.com, me@pedrofsantos.com
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.02.10
+ * Version: 2015.07.22
  */
 var EIReaderTools =
 {
-	version: "2015.02.10",
+	version: "2015.07.22",
 	options:
 	{
 		fullscreen:
@@ -21,6 +21,7 @@ var EIReaderTools =
 				off: "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAI1JREFUeNrsV0EOwCAI6w/8/6lP8gk8ZTuPLUoirltCEy8mpY0iIAAcg0WsgxONreIRE4+bhnzYr05AkgO2wQQHV3wxwAmBieJe6xY8w0Q0BlcDZHOngXqA1zPziE68BTjNmWDGM4qKexNEoVAoJPVzWSGSlmJpM3q1HcsHEvlI9omhtL5m9TWT5cApwAD/IigEZttSgAAAAABJRU5ErkJggg=="
 			}
 		},
+		// backup of the original functions
 		savedFunctions:
 		{
 			"ResizeViewer":
@@ -53,99 +54,93 @@ var EIReaderTools =
 			}
 		},
 	},
+	// "jump to page" init method
 	initPagination: function()
 	{
 		var el = $("<div>", {id: "eirt-pag-cont"})
-	    	.css(
-	    	{
-	    		"display": "inline-block",
+			.css(
+			{
+				"display": "inline-block",
 				"color": "#000",
 				"position": "relative",
 				"padding": "0 2px",
 				"border-left": "1px solid hsl(0, 0%, 70%)",
 				"border-right": "1px solid hsl(0, 0%, 70%)",
-	    	})
-	    	.insertAfter($("#eirt-state"));
+			})
+			.insertAfter($("#eirt-state"));
 
-	    var goToPage = function(e)
-	    {
-	    	e.stopPropagation();
-		    e.preventDefault();
+		// jump to page event handler
+		var goToPage = function(e)
+		{
+			e.stopPropagation();
+			e.preventDefault();
 
-		    if (e.type !== "click")
-		    {
-		    	var keycode = (e.keyCode ? e.keyCode : e.which);
+			if (e.type !== "click")
+			{
+				var keycode = (e.keyCode ? e.keyCode : e.which);
 				if (keycode !== 13 || e.type !== "keyup")
 					return false;
-		    }
+			}
 
-	    	var $this = $(this);
-		    var input = $this;
-		    if ($this.siblings('#eirt-pag-input').length > 0)
-		    	input = $this.siblings('#eirt-pag-input');
-		    var inputVal = input.val();
-		    var imgs = $("#bvdMenuImg img[onclick]");
-		    input.val("");
-		    var specialPages =
-		    {
-		    	"i": 2,
-		    	"inicio": 0,
-		    	"fim": imgs.length - 1
-		    };
-		    if (specialPages[inputVal] != null)
-		    {
-		        $(imgs[specialPages[inputVal]]).click();
-		        return;
-		    }
-		    var num = parseInt(inputVal);
-		    if (num == null || num === NaN)
-		    	return;
-		    var numLimited = Math.max(Math.min(num, imgs.length), 0);
-		    $(imgs[numLimited]).click();
-		    return;
-	    };
-
-	    var focusInput = function(e)
-	    {
-		    if (e.which == 80 && e.altKey)
-		        $("#eirt-pag-input").focus();
+			var $this = $(this);
+			var input = $this;
+			if ($this.siblings('#eirt-pag-input').length > 0)
+				input = $this.siblings('#eirt-pag-input');
+			var inputVal = input.val();
+			var imgs = $("#bvdMenuImg img[onclick]");
+			input.val("");
+			var specialPages =
+			{
+				"i": 2,
+				"inicio": 0,
+				"fim": imgs.length - 1
+			};
+			var specialPagesEN =
+			{
+				"i": 2,
+				"begin": 0,
+				"end": imgs.length - 1
+			};
+			if (specialPages[inputVal] != null || specialPagesEN[inputVal] != null)
+			{
+				$(imgs[specialPages[inputVal]]).click();
+				return;
+			}
+			var num = parseInt(inputVal);
+			if (num == null || num === NaN)
+				return;
+			var numLimited = Math.max(Math.min(num, imgs.length), 0);
+			$(imgs[numLimited]).click();
+			return;
 		};
 
-	    //$("<label>").text("Página:").appendTo(el);
-	    $("<input>",
-	    	{
-	    		id: "eirt-pag-input",
-	    		type: "text",
-	    		placeholder: "Página"
-	    	})
-	    	.css(
-	    	{
-	    		"width": "40px",
-	    		"height": "14px",
-	    		"margin": "0px 3px 0 5px",
-	    	})
-	    	.appendTo(el);
+		// shortcut to focus the input box, event handler
+		var focusInput = function(e)
+		{
+			if (e.which == 80 && e.altKey)
+				$("#eirt-pag-input").focus();
+		};
 
-	    /*
-	    $("<input>",
-	    	{
-		        id: "eirt-pag-acc",
-		        type: "button",
-		        value: "Ok"
-		    })
-		    .css(
-	    	{
-	    		"width": "30px",
-	    		"height": "18px"
-	    	})
-	    	.appendTo(el);
-	    */
+		$("<input>",
+			{
+				id: "eirt-pag-input",
+				type: "text",
+				placeholder: "Página"
+			})
+			.css(
+			{
+				"width": "40px",
+				"height": "14px",
+				"margin": "0px 3px 0 5px",
+			})
+			.appendTo(el);
 
-	    $(document)
-	    	.on("keyup.eirt", focusInput)
-	    	.on("keyup.eirt", "#eirt-pag-input", goToPage)
-	    	.on("click.eirt", "#eirt-pag-acc", goToPage);
+		$(document)
+			.on("keyup.eirt", focusInput)
+			.on("keyup.eirt", "#eirt-pag-input", goToPage)
+			.on("click.eirt", "#eirt-pag-acc", goToPage);
 	},
+	// "previous (left arrow) and next (right arrow) page" init method
 	initNavigation: function()
 	{
 		$(document).on("keyup.eirt", function(e)
@@ -154,28 +149,32 @@ var EIReaderTools =
 			var $handlerL = $(".page.fleft");
 			var $handlerR = $(".page.fright");
 
-		    if (e.which === 39)
-		    {
-		    	if ($handlerR.length === 0)
-		    		$handlerR = $(".page:visible");
-		    	var src = $handlerR.attr("src");
-		    	var page = +src.split("/")[3].replace("f", "");
+			// right arrow
+			if (e.which === 39)
+			{
+				if ($handlerR.length === 0)
+					$handlerR = $(".page:visible");
+				var src = $handlerR.attr("src");
+				var page = +src.split("/")[3].replace("f", "");
 
-		    	if (page < imgs.length - 1)
-	    			$(".crn.topright").click();
-		    }
-		    else if (e.which === 37)
-		    {
-		    	if ($handlerL.length === 0)
-		    		$handlerL = $(".page:visible");
-		    	var src = $handlerL.attr("src");
-		    	var page = +src.split("/")[3].replace("f", "");
+				if (page < imgs.length - 1)
+					$(".crn.topright").click();
+			}
+			// left arrow
+			else if (e.which === 37)
+			{
+				if ($handlerL.length === 0)
+					$handlerL = $(".page:visible");
+				var src = $handlerL.attr("src");
+				var page = +src.split("/")[3].replace("f", "");
 
-		    	if (page > 1)
-		    		$(".crn.topleft").click();
-		    }
+				if (page > 1)
+					$(".crn.topleft").click();
+			}
 		});
 	},
+	// overriding the default mousewheel action to
+	// zoom in and out the page
 	initZoom: function()
 	{
 		var mathLimit = function(value, min, max)
@@ -183,6 +182,7 @@ var EIReaderTools =
 			return Math.max(Math.min(value, max), min);
 		};
 
+		// catch mousewheel action event handler
 		$(document).on("mousewheel.eirt", ".panviewport", function(e)
 			{
 				//$(this).css("overflow", "hidden");
@@ -200,8 +200,11 @@ var EIReaderTools =
 
 				var scale = mathLimit((deltaY / 1000) + scaleValue, 0.1, 1);
 				var transform = "scale("+scale+")".replace("@par", scale);
-				//var transformOrigin = mathLimit(pointX, 0, 100)+"% "+mathLimit(pointY, 0, 100)+"%";
-				
+				/*
+				var transformOrigin = mathLimit(pointX, 0, 100)+"% "+mathLimit(pointY, 0, 100)+"%";
+				*/
+
+				// save scale value and apply transform to .panviewport
 				$this.data("scale", scale)
 					.css(
 					{
@@ -211,13 +214,23 @@ var EIReaderTools =
 				e.preventDefault();
 			});
 	},
+	// inits the fullscreen functionality
 	initFullscreen: function()
 	{
 		var icons = EIReaderTools.options.fullscreen.icon;
+		// fullscreen icon click, event handler
+		// toggles fullscreen on and off
 		var toggleFullscreen = function(e)
 		{
+			// keyup event triggered but not ESC key
+			if (e.which !== 27 && e.type === "keyup")
+				return;
+
+			e.data = e.data || {};
+			e.data.modeOverride = (e.data) ? e.data.modeOverride : null;
+
 			var $this = $(this);
-			var mode = !$this.data("mode");
+			var mode = (e.data.modeOverride != null) ? e.data.modeOverride : !$this.data("mode");
 			var bgcolor = 'url("data:image/png;base64,'+icons.off+'")';
 			var fsLeft = "50%";
 			var fsTransform = "-219%";
@@ -226,6 +239,7 @@ var EIReaderTools =
 			var holder = $("#zahirad192");
 			$("#bvdPage").removeAttr("style");
 
+			// turn on fullscreen else the default is turn off
 			if (mode)
 			{
 				$('#bvdPage').css(
@@ -248,14 +262,15 @@ var EIReaderTools =
 				fsTransform = "0%";
 			}
 
-            var style = $("#eirt-container")
-                .css(
-                {
-                    "left": fsLeft,
-                    "top": fsTop,
-                }).attr("style");
+			var style = $("#eirt-container")
+				.css(
+				{
+					"left": fsLeft,
+					"top": fsTop,
+				})
+				.attr("style");
 
-            $("#eirt-container").attr("style", style+";transform: translateX("+fsTransform+");");
+			$("#eirt-container").attr("style", style+";transform: translateX("+fsTransform+");");
 
 			$this.css("background-image", bgcolor);
 			$this.data("mode", mode);
@@ -263,6 +278,7 @@ var EIReaderTools =
 			$(window).trigger("resize");
 		};
 
+		// fullscreen ui element
 		var $fs = $("<div>", {id: "eirt-fs"})
 			.css(
 			{
@@ -279,19 +295,25 @@ var EIReaderTools =
 			.click(toggleFullscreen)
 			.insertAfter($("#eirt-pag-cont"));
 
-		$(document).on("click.eirt", ".crn.topright, .crn.topleft", function()
-		{
-			var $el = $("#eirt-fs");
-			if ($el.data("mode"))
+		// @1
+		$(document)
+			.on("click.eirt", ".crn.topright, .crn.topleft", function()
 			{
-				$el.click();
-			}
-		});
+				var $el = $("#eirt-fs");
+				if ($el.data("mode"))
+				{
+					$el.click();
+				}
+			})
+			.on("keyup.eirt", {modeOverride: false}, toggleFullscreen);
 	},
+	// entry point for the tool
 	init: function()
 	{
+		// remove EIRT if already exists
 		EIReaderTools.reset();
 
+		// ui container
 		$("<div>", {id: "eirt-container"})
 			.css(
 			{
@@ -307,6 +329,7 @@ var EIReaderTools =
 			})
 			.appendTo($("body"));
 
+		// tool loading state and its name
 		$("<span>", {id: "eirt-state"})
 			.text("EIReaderTools")
 			.css(
@@ -317,6 +340,7 @@ var EIReaderTools =
 				"top": "-4px",
 			}).appendTo($("#eirt-container"));
 
+		//
 		$("head").append($("<style>", {id: "eirt-style"}).text(
 			'#eirt-state:after{'+
 				'content: "v'+EIReaderTools.version+'";'+
@@ -327,6 +351,7 @@ var EIReaderTools =
 				'bottom: -8px;'+
 				'margin-left: 32px;}'));
 
+		// apply a moded function
 		CancelZoom = EIReaderTools.options.savedFunctions.CancelZoom.mod;
 
 		EIReaderTools.initPagination();
@@ -334,18 +359,20 @@ var EIReaderTools =
 		EIReaderTools.initFullscreen();
 		EIReaderTools.initZoom();
 
+		// load success, change color of #eirt-state
 		$("#eirt-state").css("color", "#32CD32");
 	},
+	// remove the EIRT
 	reset: function()
 	{
-		$(
-			"#eirt-container,"+
-			"#eirt-style"
-		).remove();
+		// remove the ui elements
+		$("#eirt-container,#eirt-style").remove();
 
+		// set the original functions in place
 		ResizeViewer = EIReaderTools.options.savedFunctions.ResizeViewer.orig;
 		CancelZoom = EIReaderTools.options.savedFunctions.CancelZoom.orig;
 
+		// unbind events
 		$(document)
 			.off("click.eirt")
 			.off("dblclick.eirt")
