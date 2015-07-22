@@ -37,9 +37,9 @@ Enhancements for readers of [Exame Informática online magazine](http://exameinf
       - "begin": goes to the first page
       - "end": goes to the last page
   - Fullscreen
-    - usar o ícone do ecrã inteiro
-  - Zoom da página
-    - clicar na página e usar a roda de SCROLL do rato para aproximar ou afastar a página
+    - click on the fullscreen icon to toggle the mode
+  - Page zoom
+    - click on the page and use the MOUSEWHEEL to zoom in and out on the page
 
 ### Tested on
 
