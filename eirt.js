@@ -6,7 +6,7 @@
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.07.22
+ * Version: 2015.07.24
  */
 var EIReaderTools =
 {
