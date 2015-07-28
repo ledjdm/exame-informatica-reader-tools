@@ -6,11 +6,11 @@
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.07.24
+ * Version: 2015.07.28
  */
 var EIReaderTools =
 {
-	version: "2015.07.22",
+	version: "2015.07.28",
 	options:
 	{
 		fullscreen:
@@ -237,22 +237,24 @@ var EIReaderTools =
 			var fsTop = "6px";
 			var func = "orig";
 			var holder = $("#zahirad192");
-			$("#bvdPage").removeAttr("style");
+			$("#bvdPage_css").remove();
 
 			// turn on fullscreen else the default is turn off
 			if (mode)
 			{
-				$('#bvdPage').css(
-					{
-						"position": "absolute",
-						"top": "0",
-						"right": "0",
-						"left": "0",
-						"bottom": "0",
-						"margin": "0",
-						"z-index": "1000",
-						"background-color": "#F5F5F5",
-					});
+				$("<style>", {id: "bvdPage_css"}).html(
+					"#bvdPage\
+					{\
+						position: absolute;\
+						top: 0;\
+						right: 0;\
+						left: 0;\
+						bottom: 0;\
+						margin: 0;\
+						z-index: 1000;\
+						background-color: #F5F5F5;\
+					}").appendTo($("head"));
+
 				func = "mod"
 				bgcolor = 'url("data:image/png;base64,'+icons.on+'")';
 				holder = $("body");
@@ -294,18 +296,6 @@ var EIReaderTools =
 			.data("mode", false)
 			.click(toggleFullscreen)
 			.insertAfter($("#eirt-pag-cont"));
-
-		// @1
-		$(document)
-			.on("click.eirt", ".crn.topright, .crn.topleft", function()
-			{
-				var $el = $("#eirt-fs");
-				if ($el.data("mode"))
-				{
-					$el.click();
-				}
-			})
-			.on("keyup.eirt", {modeOverride: false}, toggleFullscreen);
 	},
 	// entry point for the tool
 	init: function()
