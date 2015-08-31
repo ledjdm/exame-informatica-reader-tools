@@ -1,10 +1,10 @@
 ![Image of UI of the tool](http://pedrofsantos.com/projects/eirt/tool.png)
 
 # Exame Informática Reader Tools
-v 2015.07.28 ([old versions](http://pedrofsantos.com/projects/eirt/old/))
+v 2015.08.31 ([old versions](http://pedrofsantos.com/projects/eirt/old/))
 
-- [English](#english)
-- [Português](#português)
+- [Read in English](#english)
+- [Lêr em Português](#português)
 
 ## English
 ### What is it?

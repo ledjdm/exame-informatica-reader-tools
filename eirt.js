@@ -6,11 +6,11 @@
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.07.28
+ * Version: 2015.08.31
  */
 var EIReaderTools =
 {
-	version: "2015.07.28",
+	version: "2015.08.31",
 	options:
 	{
 		fullscreen:
@@ -51,8 +51,41 @@ var EIReaderTools =
 					$this.css("transform", "");
 					EIReaderTools.options.savedFunctions.CancelZoom.orig();
 				},
+			},
+			"PageChange":
+			{
+				"orig": PageChange,
+				"mod": function()
+				{
+					CancelCut();
+					Tag();
+					TagAd();
+					if (!smode)
+						$(window).trigger("resize");
+					if (player)
+						$("#jqp").jPlayer("play");
+
+					// custom event: before sending request
+					$(document).trigger("endPageChanged.eirt");
+				}
 			}
 		},
+	},
+	// highlight current page on the side menu
+	highlightSidePage: function()
+	{
+		var currPage = GetPage().p;
+		var $container = $('#bvdMenuInner');
+		var $imgs = $("#bvdMenuImg img").removeClass("eirt-highlight");
+		var $el = $imgs.eq(currPage);
+
+		$el.addClass("eirt-highlight");
+		$imgs.eq(currPage + ((currPage % 2 == 0) ? 1 : -1)).addClass("eirt-highlight");
+
+		$container.animate(
+		{
+			scrollTop: parseInt(currPage / 2) * 98
+		}, 1000);
 	},
 	// "jump to page" init method
 	initPagination: function()
@@ -103,7 +136,7 @@ var EIReaderTools =
 			};
 			if (specialPages[inputVal] != null || specialPagesEN[inputVal] != null)
 			{
-				$(imgs[specialPages[inputVal]]).click();
+				$(imgs[specialPages[inputVal] || specialPagesEN[inputVal]]).click();
 				return;
 			}
 			var num = parseInt(inputVal);
@@ -111,6 +144,7 @@ var EIReaderTools =
 				return;
 			var numLimited = Math.max(Math.min(num, imgs.length), 0);
 			$(imgs[numLimited]).click();
+
 			return;
 		};
 
@@ -339,15 +373,22 @@ var EIReaderTools =
 				'position: absolute;'+
 				'left: 0;'+
 				'bottom: -8px;'+
-				'margin-left: 32px;}'));
+				'margin-left: 32px;}'+
+			'#bvdMenuImg img.eirt-highlight{'+
+				'border: 4px solid rgb(0, 173, 239);'+
+				'margin: 0;}'));
+
+		$(document).on("endPageChanged.eirt", EIReaderTools.highlightSidePage);
 
 		// apply a moded function
 		CancelZoom = EIReaderTools.options.savedFunctions.CancelZoom.mod;
+		PageChange = EIReaderTools.options.savedFunctions.PageChange.mod;
 
 		EIReaderTools.initPagination();
 		EIReaderTools.initNavigation();
 		EIReaderTools.initFullscreen();
 		EIReaderTools.initZoom();
+		EIReaderTools.highlightSidePage();
 
 		// load success, change color of #eirt-state
 		$("#eirt-state").css("color", "#32CD32");
@@ -358,16 +399,20 @@ var EIReaderTools =
 		// remove the ui elements
 		$("#eirt-container,#eirt-style").remove();
 
+		$("#bvdMenuImg img").removeClass("eirt-highlight")
+
 		// set the original functions in place
 		ResizeViewer = EIReaderTools.options.savedFunctions.ResizeViewer.orig;
 		CancelZoom = EIReaderTools.options.savedFunctions.CancelZoom.orig;
+		PageChange = EIReaderTools.options.savedFunctions.PageChange.orig;
 
 		// unbind events
 		$(document)
 			.off("click.eirt")
 			.off("dblclick.eirt")
 			.off("mousewheel.eirt")
-			.off("keyup.eirt");
+			.off("keyup.eirt")
+			.off("endPageChanged.eirt");
 	},
 }
 
