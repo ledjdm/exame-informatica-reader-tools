@@ -6,11 +6,11 @@
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.08.31
+ * Version: 2015.09.01
  */
 var EIReaderTools =
 {
-	version: "2015.08.31",
+	version: "2015.09.01",
 	options:
 	{
 		fullscreen:
@@ -155,6 +155,23 @@ var EIReaderTools =
 				$("#eirt-pag-input").focus();
 		};
 
+		var focusOutInput = function() // input got focus
+		{
+			$(this).on("keyup.esc.eirt", function(e) // wait for esc key to unfocus
+				{
+					var $this = $(this);
+					if (e.which === 27 && $this.is(":focus"))
+					{
+						document.getElementByTagName().blur();
+						return false;
+					}
+
+				}).one("blur.esc.eirt", function() // on focus out, remove above event
+				{
+					$(this).off("keyup.esc.eirt");
+				});
+		};
+
 		$("<input>",
 			{
 				id: "eirt-pag-input",
@@ -172,6 +189,7 @@ var EIReaderTools =
 		$(document)
 			.on("keyup.eirt", focusInput)
 			.on("keyup.eirt", "#eirt-pag-input", goToPage)
+			.on("focus.eirt", "#eirt-pag-input", focusOutInput)
 			.on("click.eirt", "#eirt-pag-acc", goToPage);
 	},
 	// "previous (left arrow) and next (right arrow) page" init method
@@ -256,14 +274,20 @@ var EIReaderTools =
 		// toggles fullscreen on and off
 		var toggleFullscreen = function(e)
 		{
+			var $this = $(this);
+
+			// redefine $this when using ESC key
+			if (e.type === "keyup")
+				$this = $("#eirt-fs");
+
 			// keyup event triggered but not ESC key
-			if (e.which !== 27 && e.type === "keyup")
+			if ((e.which !== 27 && e.type === "keyup")
+			|| e.which === 27 && !$this.data("mode"))
 				return;
 
 			e.data = e.data || {};
 			e.data.modeOverride = (e.data) ? e.data.modeOverride : null;
 
-			var $this = $(this);
 			var mode = (e.data.modeOverride != null) ? e.data.modeOverride : !$this.data("mode");
 			var bgcolor = 'url("data:image/png;base64,'+icons.off+'")';
 			var fsLeft = "50%";
@@ -310,6 +334,7 @@ var EIReaderTools =
 
 			$this.css("background-image", bgcolor);
 			$this.data("mode", mode);
+
 			ResizeViewer = EIReaderTools.options.savedFunctions["ResizeViewer"][func];
 			$(window).trigger("resize");
 		};
@@ -330,6 +355,8 @@ var EIReaderTools =
 			.data("mode", false)
 			.click(toggleFullscreen)
 			.insertAfter($("#eirt-pag-cont"));
+
+		$(document).on("keyup.fullscreen.eirt", {modeOverride: false}, toggleFullscreen);
 	},
 	// entry point for the tool
 	init: function()
@@ -412,6 +439,7 @@ var EIReaderTools =
 			.off("dblclick.eirt")
 			.off("mousewheel.eirt")
 			.off("keyup.eirt")
+			.off("keyup.fullscreen.eirt")
 			.off("endPageChanged.eirt");
 	},
 }

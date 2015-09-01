@@ -34,14 +34,17 @@ Enhancements for readers of [Exame Informática online magazine](http://exameinf
     - use the ARROW LEFT key or ARROW RIGHT key, to jump to the previous or next page
   - Jump to page (ALT+P to focus text box) ![Image of the Jump to Page text box](http://pedrofsantos.com/projects/eirt/jumptopage.png)
     - write the page and press ENTER key, to jump to that page number
+    - use ESC key to unfocus textbox
     - or write these special text (without quotes):
       - "i": goes to the index page
       - "begin": goes to the first page
       - "end": goes to the last page
   - Fullscreen ![Image of the fullscreen icon](http://pedrofsantos.com/projects/eirt/fullscreen.png)
     - click on the fullscreen icon to toggle the mode
+    - use ESC key to exit
   - Page zoom
     - click on the page and use the MOUSEWHEEL to zoom in and out on the page
+  - Highlight of the current page on the side menu
 
 ### Tested on
 
@@ -78,14 +81,17 @@ Funcionalidades adicionais para os leitores da [revista online Exame Informátic
     - usar tecla SETA ESQUERDA ou tecla SETA DIREITA, para saltar para a página anterior ou seguinte
   - Saltar para página (ALT+P para ativar caixa de texto) ![Image of the Jump to Page text box](http://pedrofsantos.com/projects/eirt/jumptopage.png)
     - escrever número de página seguido da tecla ENTER, para saltar para essa página
+    - usar a tecla ESC para tirar o fócus da caixa de texto
     - ou escrever texto especial (sem aspas):
       - "i": ir para a página do índice
       - "inicio": ir para a 1º página
       - "fim": ir para a última página
   - Ecrã inteiro ![Image of the fullscreen icon](http://pedrofsantos.com/projects/eirt/fullscreen.png)
     - usar o ícone do ecrã inteiro
+    - usar a tecla ESC para sair
   - Zoom da página
     - clicar na página e usar a roda de SCROLL do rato para aproximar ou afastar a página
+  - Realçada a página atual no menu lateral
 
 ### Testado em
 
