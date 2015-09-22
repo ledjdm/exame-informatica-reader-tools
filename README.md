@@ -15,7 +15,7 @@ Enhancements for readers of [Exame Informática online magazine](http://exameinf
   1. Copy the code below:
 
   ```javascript
-  javascript:(function(c){var s=document.createElement("script");var h=document.getElementsByTagName("head")[0];s.src="http://pedrofsantos.com/projecs/eirt/eirt.min.js";s.async=true;s.onload = s.onreadystatechange = function(){if (document.readyState == "complete" && c) c();};h.appendChild(s);})();
+  javascript:(function(c){var s=document.createElement("script");var h=document.getElementsByTagName("head")[0];s.src="http://pedrofsantos.com/projects/eirt/eirt.min.js";s.async=true;s.onload = s.onreadystatechange = function(){if (document.readyState == "complete" && c) c();};h.appendChild(s);})();
   ```
   2. Create a new browser bookmark with a name (e.g. "Exame Informática Reader Tools")
   3. Paste the above code in the "URL"/"Link" text field

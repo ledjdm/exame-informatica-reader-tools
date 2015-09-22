@@ -6,11 +6,11 @@
  * Released under the MIT license
  * http://en.wikipedia.org/wiki/MIT_License
  *
- * Version: 2015.09.01
+ * Version: 2015.09.22
  */
 var EIReaderTools =
 {
-	version: "2015.09.01",
+	version: "2015.09.22",
 	options:
 	{
 		fullscreen:
@@ -67,6 +67,8 @@ var EIReaderTools =
 
 					// custom event: before sending request
 					$(document).trigger("endPageChanged.eirt");
+
+					$("#ctl00_cph_viewer1_bvdPages").append($("<div>").addClass("eirt-loading"));
 				}
 			}
 		},
@@ -82,10 +84,30 @@ var EIReaderTools =
 		$el.addClass("eirt-highlight");
 		$imgs.eq(currPage + ((currPage % 2 == 0) ? 1 : -1)).addClass("eirt-highlight");
 
-		$container.animate(
+		$container.stop().animate(
 		{
 			scrollTop: parseInt(currPage / 2) * 98
 		}, 1000);
+	},
+	// activates custom loading for the page "start ajax request"
+	requestPageLoading: function(e)
+	{
+		e = e || {type: "click", target: $(".crn.topright")[0]};
+		var containers = $("#bvNav td.bvNavLinkSec, #bvdMenuImg img, .crn.topleft, .crn.topright");
+		var loading = $(".eirt-loading");
+
+		if ((e.type === "click"
+			&& containers.find(e.target).length
+			|| containers.is(e.target))
+		&& loading.css("display") === "none")
+		{
+			loading.css("display", "block");
+			$(document).one("endPageChanged.eirt", function()
+				{
+					$(".eirt-loading").remove();
+				});
+
+		}
 	},
 	// "jump to page" init method
 	initPagination: function()
@@ -145,7 +167,7 @@ var EIReaderTools =
 			var numLimited = Math.max(Math.min(num, imgs.length), 0);
 			$(imgs[numLimited]).click();
 
-			return;
+			EIReaderTools.requestPageLoading();
 		};
 
 		// shortcut to focus the input box, event handler
@@ -223,6 +245,10 @@ var EIReaderTools =
 				if (page > 1)
 					$(".crn.topleft").click();
 			}
+			else
+				return;
+
+			EIReaderTools.requestPageLoading();
 		});
 	},
 	// overriding the default mousewheel action to
@@ -364,6 +390,9 @@ var EIReaderTools =
 		// remove EIRT if already exists
 		EIReaderTools.reset();
 
+		// watch for specific elements clicks to trigger custom loading
+		$(document).on("click.eirt.requestStarted", EIReaderTools.requestPageLoading);
+
 		// ui container
 		$("<div>", {id: "eirt-container"})
 			.css(
@@ -392,19 +421,50 @@ var EIReaderTools =
 			}).appendTo($("#eirt-container"));
 
 		//
-		$("head").append($("<style>", {id: "eirt-style"}).text(
-			'#eirt-state:after{'+
-				'content: "v'+EIReaderTools.version+'";'+
-				'color: black;'+
-				'font-size: 8px;'+
-				'position: absolute;'+
-				'left: 0;'+
-				'bottom: -8px;'+
-				'margin-left: 32px;}'+
-			'#bvdMenuImg img.eirt-highlight{'+
-				'border: 4px solid rgb(0, 173, 239);'+
-				'margin: 0;}'));
+		$("head").append($("<style>", {id: "eirt-style"})
+			.text(
+				'#eirt-state:after{'+
+					'content: "v'+EIReaderTools.version+'";'+
+					'color: black;'+
+					'font-size: 8px;'+
+					'position: absolute;'+
+					'left: 0;'+
+					'bottom: -8px;'+
+					'margin-left: 32px;}'+
+				'#bvdMenuImg img.eirt-highlight{'+
+					'border: 4px solid rgb(0, 173, 239);'+
+					'margin: 0;}'+
+				// http://stephanwagner.me/only-css-loading-spinner
+				'@keyframes loading{'+
+					'to {transform: rotate(360deg);}}'+
+				'@-webkit-keyframes loading{'+
+					'to {-webkit-transform: rotate(360deg);}}'+
+				'.eirt-loading{'+
+					'display: none;'+
+					'min-width: 100%;'+
+					'min-height: 100%;'+
+					'position: absolute;'+
+					'background-color: hsla(100, 0%, 0%, 0.5);}'+
+				'.eirt-loading:before{'+
+					'content: "A carregar...";'+
+					'position: absolute;'+
+					'top: 50%;'+
+					'left: 50%;'+
+					'width: 150px;'+
+					'height: 150px;'+
+					'margin-top: -75px;'+
+					'margin-left: -75px;}'+
+				'.eirt-loading:not(:required):before{'+
+					'content: "";'+
+					'border-radius: 50%;'+
+					'border-top: 10px solid #03ade0;'+
+					'border-right: 0px solid transparent;'+
+					'animation: loading 1s linear infinite;'+
+					'-webkit-animation: loading 1s linear infinite;}'
+				)
+			);
 
+		$("#ctl00_cph_viewer1_bvdPages").append($("<div>").addClass("eirt-loading"));
 		$(document).on("endPageChanged.eirt", EIReaderTools.highlightSidePage);
 
 		// apply a moded function
@@ -435,6 +495,7 @@ var EIReaderTools =
 
 		// unbind events
 		$(document)
+			.off("click.eirt.requestStarted")
 			.off("click.eirt")
 			.off("dblclick.eirt")
 			.off("mousewheel.eirt")
