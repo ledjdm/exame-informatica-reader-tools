@@ -45,12 +45,13 @@ Enhancements for readers of [Exame Informática online magazine](http://exameinf
   - Page zoom
     - click on the page and use the MOUSEWHEEL to zoom in and out on the page
   - Highlight of the current page on the side menu
+  - Loading icon shows up when page is changing
 
-### Tested on
+### Tested on/Supported by
 
-  - Google Chrome 40-43
-  - Mozilla Firefox 39
-  - Internet Explorer 11
+  - Google Chrome 40+
+  - Mozilla Firefox 39+
+  - Internet Explorer 11+
 
 
 ## Português
@@ -92,9 +93,10 @@ Funcionalidades adicionais para os leitores da [revista online Exame Informátic
   - Zoom da página
     - clicar na página e usar a roda de SCROLL do rato para aproximar ou afastar a página
   - Realçada a página atual no menu lateral
+  - Mostrado um icon de carregamento quando a página está a mudar
 
-### Testado em
+### Testado em/Funciona em
 
-  - Google Chrome 40-43
-  - Mozilla Firefox 39
-  - Internet Explorer 11
+  - Google Chrome 40+
+  - Mozilla Firefox 39+
+  - Internet Explorer 11+
