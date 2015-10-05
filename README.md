@@ -63,7 +63,7 @@ Funcionalidades adicionais para os leitores da [revista online Exame Informátic
   1. Copiar o código abaixo:
 
   ```javascript
-  javascript:(function(c){var s=document.createElement("script");var h=document.getElementsByTagName("head")[0];s.src="http://pedrofsantos.com/gh/eirt.min.js";s.async=true;s.onload = s.onreadystatechange = function(){if (document.readyState == "complete" && c) c();};h.appendChild(s);})();
+  javascript:(function(c){var s=document.createElement("script");var h=document.getElementsByTagName("head")[0];s.src="http://pedrofsantos.com/projects/eirt/eirt.min.js";s.async=true;s.onload = s.onreadystatechange = function(){if (document.readyState == "complete" && c) c();};h.appendChild(s);})();
   ```
   2. Criar um novo favorito no navegador da internet com um nome (por exemplo "Exame Informática Reader Tools")
   3. Colar o código que copiaste acima para o campo "URL"/"Link"
